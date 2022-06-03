@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  @apply select-none cursor-default;
+}
+
+.pfp {
+  border-radius: 1rem;
+  transition: border-radius 100ms linear;
+}
+.pfp:hover {
+  border-radius: 10px;
+}
+
+@font-face {
+  font-family: GabrielSans;
+  font-weight: bold;
+  src: url("./assets/fonts/Gabriel-Sans-Bold.otf");
+}
+
+@font-face {
+  font-family: GabrielSans;
+  font-weight: medium;
+  src: url("./assets/fonts/Gabriel-Sans-Medium.otf");
+}
+
+@font-face {
+  font-family: GabrielSans;
+  font-weight: normal;
+  src: url("./assets/fonts/Gabriel-Sans-Normal.otf");
+}
+
+* {
+  scrollbar-color: #999 #333;
+}
+*::-webkit-scrollbar {
+  @apply w-2 h-2.5;
+}
+*::-webkit-scrollbar-thumb {
+  @apply bg-tertiary-light rounded-full transition-colors;
+}
+*::-webkit-scrollbar-thumb:hover {
+  @apply bg-tertiary-dark rounded-full transition-colors;
+}
+*::-webkit-scrollbar-track {
+  @apply bg-secondary-light dark:bg-[#333] rounded-full;
+}
+
+::-moz-selection {
+  @apply bg-secondary-light dark:bg-black text-brand-blue;
+}
+
+::selection {
+  @apply bg-secondary-light dark:bg-black text-brand-blue;
+}
