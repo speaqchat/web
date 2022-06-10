@@ -1,6 +1,7 @@
 import React from "react";
 import { Friend } from "../types";
 import { motion } from "framer-motion";
+import ProfilePicture from "../assets/img/profile_pic.png";
 
 const UserModal = ({
   user,
@@ -29,7 +30,7 @@ const UserModal = ({
             src={
               user.profilePicture
                 ? user.profilePicture
-                : "https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
+                : ProfilePicture
             }
             alt=""
           />

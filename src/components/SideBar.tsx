@@ -1,12 +1,15 @@
 import React from "react";
+import ProfilePicture from "../assets/img/profile_pic.png";
 
 const SideBar = ({
   onClick,
   selectedPage,
   settingsOnClick,
+  profileOnClick,
 }: {
   onClick: (page: "Home" | "Friends") => void;
   settingsOnClick: React.MouseEventHandler<SVGSVGElement>;
+  profileOnClick: React.MouseEventHandler;
   selectedPage: "Home" | "Friends";
 }) => {
   return (
@@ -15,11 +18,12 @@ const SideBar = ({
     border-tertiary-light dark:border-tertiary-dark border-r"
     >
       <img
+        onClick={profileOnClick}
         className="w-12 h-12 object-cover my-6 shadow-md hover:shadow-2xl hover:opacity-80
       cursor-pointer pfp"
         src={
           // userStore.user?.profilePicture ? userStore.user?.profilePicture :
-          "https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
+          ProfilePicture
         }
       />
       <div className="h-px w-1/2 bg-tertiary-light dark:bg-tertiary-dark"></div>

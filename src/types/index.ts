@@ -1,7 +1,8 @@
 export interface Conversation {
   id: number;
-  user_id: number;
-  friend_id: number;
+  userId: number;
+  user: Friend;
+  friendId: number;
   friend: Friend;
 }
 
@@ -9,7 +10,6 @@ export interface Friend {
   id: number;
   username: string;
   email: string;
-  // password: string;
   profilePicture?: any;
   createdAt: Date;
   updatedAt: Date;

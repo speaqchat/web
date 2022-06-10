@@ -1,19 +1,25 @@
 import React from "react";
 import { useStore } from "../store/useStore";
 import { Message as MessageType } from "../types";
+import { motion } from "framer-motion";
+import ProfilePicture from "../assets/img/profile_pic.png";
 
 const Message = ({ message }: { message: MessageType }) => {
   const { auth } = useStore();
 
   return message.sender.username !== auth?.user?.username ? (
-    <div className="rounded-b-md group max-w-xl">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.6 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="rounded-b-md group max-w-xl"
+    >
       <div className="flex gap-2">
         <img
           className="w-10 h-10 rounded-full"
           src={
             message.sender.profilePicture
               ? message.sender.profilePicture
-              : "https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
+              : ProfilePicture
           }
           alt={`${message.sender.username}'s profile picture`}
         />
@@ -35,16 +41,20 @@ const Message = ({ message }: { message: MessageType }) => {
           hour12: true,
         })}
       </p>
-    </div>
+    </motion.div>
   ) : (
-    <div className="ml-auto rounded-b-md group max-w-xl mr-4">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.6 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="ml-auto rounded-b-md group max-w-xl mr-4"
+    >
       <div className="flex flex-row-reverse gap-2">
         <img
           className="w-10 h-10 rounded-full"
           src={
             message.sender.profilePicture
               ? message.sender.profilePicture
-              : "https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
+              : ProfilePicture
           }
           alt={`${message.sender.username}'s profile picture`}
         />
@@ -68,7 +78,7 @@ const Message = ({ message }: { message: MessageType }) => {
           hour12: true,
         })}
       </p>
-    </div>
+    </motion.div>
   );
 };
 

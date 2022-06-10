@@ -2,11 +2,13 @@ import axios from "axios";
 import { AnimatePresence } from "framer-motion";
 import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Socket } from "socket.io-client";
 import { useStore } from "../store/useStore";
 import { Conversation, Message as MessageType } from "../types";
 import EmojiPicker from "./EmojiPicker";
 import Message from "./Message";
+import ProfilePicture from "../assets/img/profile_pic.png";
+import { Socket } from "socket.io-client";
+import { any } from "zod";
 
 const Chat = ({
   conversation,
@@ -15,20 +17,25 @@ const Chat = ({
 }: {
   conversation: Conversation;
   handleProfileClick: MouseEventHandler<HTMLDivElement>;
-  socket: Socket;
+  socket: Socket | null;
 }) => {
+  const { auth } = useStore();
+
+  const otherUser =
+    conversation.user.id !== auth?.user.id
+      ? conversation.user
+      : conversation.friend;
+
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   const inputElement = useRef<HTMLInputElement | null>(null);
   const scrollElement = useRef<HTMLDivElement | null>(null);
 
-  const { auth } = useStore();
-
   const queryClient = useQueryClient();
 
   const fetchMessages = async (): Promise<MessageType[]> => {
     const res = await axios.get("/messages", {
-      data: {
+      params: {
         conversationId: conversation.id,
       },
     });
@@ -49,9 +56,14 @@ const Chat = ({
       if (content.trim().length === 0) throw new Error();
       inputElement.current!.value = "";
 
-      socket.emit("sendMessage", {
+      console.log(socket);
+
+      socket?.emit("sendMessage", {
         senderId: auth?.user.id,
-        receiverId: conversation.friend_id,
+        receiverId:
+          conversation.friendId !== auth?.user.id
+            ? conversation.friendId
+            : conversation.userId,
         text: content,
       });
 
@@ -81,6 +93,25 @@ const Chat = ({
     }
   };
 
+  socket?.on("getMessage", ({ senderId, text }) => {
+    if (!auth?.user) return;
+
+    console.log(`${senderId}: ${text}`);
+
+    messages?.push({
+      content: text,
+      conversationId: conversation.id,
+      conversation: conversation,
+      createdAt: new Date(),
+      id: 99,
+      senderId,
+      sender:
+        conversation.friendId !== auth?.user.id
+          ? conversation.friend
+          : auth?.user,
+    });
+  });
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -98,9 +129,9 @@ const Chat = ({
                 <img
                   className="object-fill w-full h-full rounded-full"
                   src={
-                    conversation.friend.profilePicture
-                      ? conversation.friend.profilePicture
-                      : "https://icon-library.com/images/default-profile-icon/default-profile-icon-16.jpg"
+                    otherUser.profilePicture
+                      ? otherUser.profilePicture
+                      : ProfilePicture
                   }
                   alt=""
                 />
@@ -108,7 +139,7 @@ const Chat = ({
               </div>
               <div>
                 <h1 className="font-medium text-xl tracking-tight leading-none">
-                  {conversation.friend.username}
+                  {otherUser.username}
                 </h1>
                 <p className="text-xs font-medium text-tertiary-light dark:text-tertiary-dark">
                   ONLINE
@@ -122,7 +153,7 @@ const Chat = ({
 
       <div
         ref={scrollElement}
-        className="m-6 flex flex-col overflow-auto scroll-smooth"
+        className="m-6 flex flex-col overflow-y-scroll overflow-x-hidden scroll-smooth"
       >
         {messages
           ? messages.map((message) => (
@@ -160,7 +191,7 @@ const Chat = ({
           }}
           ref={inputElement}
           spellCheck="false"
-          className="outline-none bg-transparent flex-grow leading-none tracking-tight"
+          className="outline-none bg-transparent flex-grow leading-none tracking-tight "
           type="text"
         />
         <div>

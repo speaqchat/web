@@ -39,9 +39,6 @@ const Login = () => {
       navigate("/");
     } catch (err: any) {
       console.log(err);
-
-      // if (err.path.includes("email")) console.log("incorrect email");
-      // if (err.path.password) console.log("incorrect password");
     }
   };
 

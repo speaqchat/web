@@ -11,8 +11,8 @@ const Friends = () => {
 
   const fetchFriends = async (): Promise<Friend[]> => {
     const res = await axios.get("/friends", {
-      data: {
-        user_id: auth?.user?.id,
+      params: {
+        userId: auth?.user.id,
       },
     });
 
@@ -23,10 +23,50 @@ const Friends = () => {
     data: friends,
     isLoading,
     error,
-  } = useQuery(["friends"], fetchFriends, {
-    refetchOnWindowFocus: true,
-    keepPreviousData: false,
+  } = useQuery("friends", fetchFriends, {
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+    retry: 1,
   });
+
+  const Display = () => {
+    if (isLoading)
+      return (
+        <div className="flex-grow flex items-center justify-center">
+          <img src={LoaderIcon} className="animate-spin-cool" />
+        </div>
+      );
+
+    if (error)
+      return (
+        <div className="w-full flex-1 flex items-center justify-center">
+          <h1 className="text-red-600 text-lg">Error loading friends.</h1>
+        </div>
+      );
+
+    if (!friends) return <div>error friends</div>;
+
+    if (!friends[0])
+      return (
+        <div className="w-full flex-1 flex items-center justify-center">
+          <div className="flex flex-col gap-2 items-center">
+            <h1 className="text-lg">You haven't added any friends!</h1>
+
+            <button className="bg-secondary-dark px-4 py-1 rounded shadow hover:opacity-80 transition-opacity">
+              Add
+            </button>
+          </div>
+        </div>
+      );
+
+    return (
+      <div className="flex flex-col mt-6 gap-4">
+        {friends.map((friend) => (
+          <FriendItem key={friend.id} user={friend} />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -38,24 +78,7 @@ const Friends = () => {
           </div>
         </div>
         <div className="bg-tertiary-dark h-px mx-6" />
-        {isLoading && !error ? (
-          <div className="flex-grow flex items-center justify-center">
-            <img src={LoaderIcon} className="animate-spin-cool" />
-          </div>
-        ) : friends && friends[0] ? (
-          <div className="flex flex-col mt-6 gap-4">
-            {friends.map((friend) => (
-              <FriendItem key={friend.id} user={friend} />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4 flex-grow items-center justify-center">
-            <p>Seems like you haven't added any friends!</p>
-            <button className="px-2 py-1 bg-secondary-light dark:bg-secondary-dark shadow rounded">
-              Add a friend
-            </button>
-          </div>
-        )}
+        <Display />
         {/* {error && <div>error fetching friends</div>} */}
       </div>
     </>
