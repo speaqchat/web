@@ -1,7 +1,7 @@
-import React from "react";
-import { Friend } from "../types";
 import { motion } from "framer-motion";
+import React from "react";
 import ProfilePicture from "../assets/img/profile_pic.png";
+import { Friend } from "../types";
 
 const UserModal = ({
   user,

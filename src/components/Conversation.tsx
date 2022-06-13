@@ -1,9 +1,7 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
-import { useStore } from "../store/useStore";
-import { Conversation as ConversationType, Friend } from "../types";
+import React from "react";
 import ProfilePicture from "../assets/img/profile_pic.png";
+import { useStore } from "../store/useStore";
+import { Conversation as ConversationType } from "../types";
 
 const Conversation = ({
   conversation,

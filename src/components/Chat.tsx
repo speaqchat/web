@@ -1,14 +1,13 @@
 import axios from "axios";
 import { AnimatePresence } from "framer-motion";
-import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
+import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { Socket } from "socket.io-client";
+import ProfilePicture from "../assets/img/profile_pic.png";
 import { useStore } from "../store/useStore";
 import { Conversation, Message as MessageType } from "../types";
 import EmojiPicker from "./EmojiPicker";
 import Message from "./Message";
-import ProfilePicture from "../assets/img/profile_pic.png";
-import { Socket } from "socket.io-client";
-import { any } from "zod";
 
 const Chat = ({
   conversation,

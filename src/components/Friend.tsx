@@ -1,12 +1,11 @@
 import axios from "axios";
-import React from "react";
+import { motion } from "framer-motion";
 import { useMutation, useQueryClient } from "react-query";
 import MessageUserIcon from "../assets/icon/message-circle.svg";
 import RemoveFriendIcon from "../assets/icon/user-minus.svg";
+import ProfilePicture from "../assets/img/profile_pic.png";
 import { useStore } from "../store/useStore";
 import { Friend as FriendType } from "../types";
-import { motion } from "framer-motion";
-import ProfilePicture from "../assets/img/profile_pic.png";
 
 const Friend = ({ user }: { user: FriendType }) => {
   const { auth } = useStore();

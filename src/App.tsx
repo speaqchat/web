@@ -1,6 +1,6 @@
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
-import { EffectCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useOnline } from "rooks";
@@ -14,7 +14,7 @@ import Friends from "./components/Friends";
 import UserModal from "./components/ProfileModal";
 import SettingsModal from "./components/SettingsModal";
 import SideBar from "./components/SideBar";
-import SocketContext from "./socket-context";
+import SocketContext from "./socketContext";
 import { useStore } from "./store/useStore";
 import { Conversation as ConversationType } from "./types";
 

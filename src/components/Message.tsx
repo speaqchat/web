@@ -1,8 +1,7 @@
-import React from "react";
-import { useStore } from "../store/useStore";
-import { Message as MessageType } from "../types";
 import { motion } from "framer-motion";
 import ProfilePicture from "../assets/img/profile_pic.png";
+import { useStore } from "../store/useStore";
+import { Message as MessageType } from "../types";
 
 const Message = ({ message }: { message: MessageType }) => {
   const { auth } = useStore();
