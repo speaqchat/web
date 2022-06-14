@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/node": "^17.0.42",
     "@types/react-toggle": "^4.0.3",
     "axios": "^0.27.2",
     "framer-motion": "^6.3.3",
