@@ -20,6 +20,8 @@ const AddFriendModal = ({ onClick }: { onClick: () => void }) => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("friends");
+        queryClient.invalidateQueries("friendreq");
+        onClick();
       },
     }
   );

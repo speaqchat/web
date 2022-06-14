@@ -5,9 +5,30 @@ import FriendIcon from "../assets/icon/user-plus.svg";
 import { useStore } from "../store/useStore";
 import { Friend } from "../types";
 import FriendItem from "./Friend";
+import FriendRequest from "./FriendRequest";
 
 const Friends = () => {
   const { auth } = useStore();
+
+  const fetchFriendReq = async (): Promise<any> => {
+    const res = await axios.get("/friendreqs", {
+      params: {
+        userId: auth?.user.id,
+      },
+    });
+
+    return res.data;
+  };
+
+  const {
+    data: friendReq,
+    isLoading: isLoadingFriendReq,
+    isError: isErrorFriendReq,
+  } = useQuery("friendreq", fetchFriendReq, {
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+    retry: 1,
+  });
 
   const fetchFriends = async (): Promise<Friend[]> => {
     const res = await axios.get("/friends", {
@@ -21,23 +42,57 @@ const Friends = () => {
 
   const {
     data: friends,
-    isLoading,
-    error,
+    isLoading: isLoadingFriends,
+    isError: isErrorFriends,
   } = useQuery("friends", fetchFriends, {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
     retry: 1,
   });
 
-  const Display = () => {
-    if (isLoading)
+  const DisplayFriendReq = () => {
+    if (isLoadingFriendReq)
       return (
         <div className="flex-grow flex items-center justify-center">
           <img src={LoaderIcon} className="animate-spin-cool" />
         </div>
       );
 
-    if (error)
+    if (isErrorFriendReq)
+      return (
+        <div className="w-full flex-1 flex items-center justify-center">
+          <h1 className="text-red-600 text-lg">Error loading friends.</h1>
+        </div>
+      );
+
+    if (!friendReq) return <div>error friends</div>;
+
+    if (!friendReq.incoming[0] && !friendReq.outgoing[0]) return null;
+
+    return (
+      <div className="flex flex-col mt-6 gap-4">
+        {friendReq.incoming[0] &&
+          friendReq.incoming.map((fr: any) => (
+            <FriendRequest type="incoming" key={fr.id} user={fr.user} />
+            // <FriendItem key={fr.id} user={fr.user} />
+          ))}
+        {friendReq.outgoing[0] &&
+          friendReq.outgoing.map((fr: any) => (
+            <FriendRequest type="outgoing" key={fr.id} user={fr.friend} />
+          ))}
+      </div>
+    );
+  };
+
+  const DisplayFriends = () => {
+    if (isLoadingFriends)
+      return (
+        <div className="flex-grow flex items-center justify-center">
+          <img src={LoaderIcon} className="animate-spin-cool" />
+        </div>
+      );
+
+    if (isErrorFriends)
       return (
         <div className="w-full flex-1 flex items-center justify-center">
           <h1 className="text-red-600 text-lg">Error loading friends.</h1>
@@ -78,7 +133,8 @@ const Friends = () => {
           </div>
         </div>
         <div className="bg-tertiary-dark h-px mx-6" />
-        <Display />
+        <DisplayFriendReq />
+        <DisplayFriends />
         {/* {error && <div>error fetching friends</div>} */}
       </div>
     </>

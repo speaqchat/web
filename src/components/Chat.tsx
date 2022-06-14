@@ -55,7 +55,7 @@ const Chat = ({
       if (content.trim().length === 0) throw new Error();
       inputElement.current!.value = "";
 
-      console.log(socket);
+      // console.log(socket);
 
       socket?.emit("sendMessage", {
         senderId: auth?.user.id,
