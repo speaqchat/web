@@ -7,7 +7,7 @@ import { Friend } from "../types";
 import FriendItem from "./Friend";
 import FriendRequest from "./FriendRequest";
 
-const Friends = () => {
+const Friends = ({ openModal }: { openModal: () => void }) => {
   const { auth } = useStore();
 
   const fetchFriendReq = async (): Promise<any> => {
@@ -25,7 +25,7 @@ const Friends = () => {
     isLoading: isLoadingFriendReq,
     isError: isErrorFriendReq,
   } = useQuery("friendreq", fetchFriendReq, {
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     keepPreviousData: true,
     retry: 1,
   });
@@ -45,7 +45,7 @@ const Friends = () => {
     isLoading: isLoadingFriends,
     isError: isErrorFriends,
   } = useQuery("friends", fetchFriends, {
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     keepPreviousData: true,
     retry: 1,
   });
@@ -71,15 +71,28 @@ const Friends = () => {
 
     return (
       <div className="flex flex-col mt-6 gap-4">
-        {friendReq.incoming[0] &&
-          friendReq.incoming.map((fr: any) => (
-            <FriendRequest type="incoming" key={fr.id} user={fr.user} />
-            // <FriendItem key={fr.id} user={fr.user} />
-          ))}
-        {friendReq.outgoing[0] &&
-          friendReq.outgoing.map((fr: any) => (
-            <FriendRequest type="outgoing" key={fr.id} user={fr.friend} />
-          ))}
+        {friendReq.incoming[0] ? (
+          <>
+            <p className="ml-6 uppercase text-sm font-bold opacity-90">
+              Incoming friend requests
+            </p>
+            {friendReq.incoming.map((fr: any) => (
+              <FriendRequest type="incoming" key={fr.id} user={fr.user} />
+            ))}
+            <hr className="opacity-40 mx-6 mt-2" />
+          </>
+        ) : null}
+        {friendReq.outgoing[0] ? (
+          <>
+            <p className="ml-6 uppercase text-sm font-bold opacity-90">
+              Outgoing friend requests
+            </p>
+            {friendReq.outgoing.map((fr: any) => (
+              <FriendRequest type="outgoing" key={fr.id} user={fr.friend} />
+            ))}
+            <hr className="opacity-40 mx-6 mt-2" />
+          </>
+        ) : null}
       </div>
     );
   };
@@ -107,7 +120,10 @@ const Friends = () => {
           <div className="flex flex-col gap-2 items-center">
             <h1 className="text-lg">You haven't added any friends!</h1>
 
-            <button className="bg-secondary-dark px-4 py-1 rounded shadow hover:opacity-80 transition-opacity">
+            <button
+              onClick={() => openModal()}
+              className="bg-secondary-dark px-4 py-1 rounded shadow hover:opacity-80 transition-opacity"
+            >
               Add
             </button>
           </div>
@@ -128,7 +144,10 @@ const Friends = () => {
       <div className="flex flex-col w-full">
         <div className="h-24 flex items-center justify-between pr-6">
           <h1 className="font-medium text-2xl ml-6">Friends</h1>
-          <div className="rounded cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-secondary-light h-7 w-7 dark:bg-secondary-dark text-center leading-none">
+          <div
+            onClick={openModal}
+            className="rounded cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-secondary-light h-7 w-7 dark:bg-secondary-dark text-center leading-none"
+          >
             <img className="dark:invert" src={FriendIcon} alt="" />
           </div>
         </div>

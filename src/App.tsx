@@ -186,7 +186,9 @@ export const App = () => {
               )}
             </SocketContext.Consumer>
           ) : null}
-          {selectedPage === "Friends" && <Friends />}
+          {selectedPage === "Friends" && (
+            <Friends openModal={() => setAddFriendModalVisible(true)} />
+          )}
         </div>
 
         <AnimatePresence>
