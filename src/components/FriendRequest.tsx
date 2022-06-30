@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { Friend } from "../types";
 import ProfilePicture from "../assets/img/profile_pic.png";
 import FriendIcon from "../assets/icon/user-plus.svg";
@@ -34,9 +33,7 @@ const FriendRequest = ({
   );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, translateX: -10 }}
-      animate={{ opacity: 1, translateX: 0 }}
+    <div
       className="mx-6 p-4 dark:bg-secondary-dark shadow rounded flex gap-4 items-center"
     >
       <img
@@ -65,7 +62,7 @@ const FriendRequest = ({
           />
         </div>
       ) : null}
-    </motion.div>
+    </div>
   );
 };
 

@@ -7,10 +7,12 @@ const Conversation = ({
   conversation,
   onClick,
   selectedConversation,
+  onMiddleClick,
 }: {
   conversation: ConversationType;
   onClick: React.MouseEventHandler<HTMLDivElement>;
   selectedConversation: ConversationType | null;
+  onMiddleClick: () => void;
 }) => {
   const { auth } = useStore();
 
@@ -22,6 +24,7 @@ const Conversation = ({
   return (
     <div
       onClick={onClick}
+      onAuxClick={(e) => e.button === 1 && onMiddleClick()}
       className={
         "cursor-pointer w-full h-14 bg-primary-light  dark:bg-primary-dark rounded transition-shadow shadow hover:bg-opacity-80 hover:shadow-md flex items-center " +
         (selectedConversation === conversation

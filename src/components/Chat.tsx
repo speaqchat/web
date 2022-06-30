@@ -97,18 +97,37 @@ const Chat = ({
 
     console.log(`${senderId}: ${text}`);
 
-    messages?.push({
-      content: text,
-      conversationId: conversation.id,
-      conversation: conversation,
-      createdAt: new Date(),
-      id: 99,
-      senderId,
-      sender:
-        conversation.friendId !== auth?.user.id
-          ? conversation.friend
-          : auth?.user,
-    });
+    queryClient.setQueryData(
+      ["messages", conversation.id],
+      (messages || []).concat({
+        content: text,
+        conversationId: conversation.id,
+        conversation: conversation,
+        createdAt: new Date(),
+        id: Math.random(),
+        senderId:
+          conversation.friendId !== auth?.user.id
+            ? conversation.friendId
+            : auth?.user.id,
+        sender:
+          conversation.friendId !== auth?.user.id
+            ? conversation.friend
+            : auth?.user,
+      })
+    );
+
+    // messages?.push({
+    //   content: text,
+    //   conversationId: conversation.id,
+    //   conversation: conversation,
+    //   createdAt: new Date(),
+    //   id: 99,
+    //   senderId,
+    //   sender:
+    //     conversation.friendId !== auth?.user.id
+    //       ? conversation.friend
+    //       : auth?.user,
+    // });
   });
 
   useEffect(() => {

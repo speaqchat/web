@@ -28,9 +28,7 @@ const Friend = ({ user }: { user: FriendType }) => {
   });
 
   return (
-    <motion.div
-      initial={{ opacity: 0, translateX: -10 }}
-      animate={{ opacity: 1, translateX: 0 }}
+    <div
       className="mx-6 p-4 dark:bg-secondary-dark shadow rounded flex gap-4 items-center"
     >
       <img
@@ -73,7 +71,7 @@ const Friend = ({ user }: { user: FriendType }) => {
           alt="Remove friend"
         />
       </div>
-    </motion.div>
+    </div>
   );
 };
 

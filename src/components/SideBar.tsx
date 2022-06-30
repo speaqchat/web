@@ -20,7 +20,7 @@ const SideBar = ({
       <img
         onClick={profileOnClick}
         className="w-12 h-12 object-cover my-6 shadow-md hover:shadow-2xl hover:opacity-80
-      cursor-pointer pfp"
+      cursor-pointer hover:rounded-md rounded-2xl transition-[border-radius] duration-200 ease-in-out"
         src={
           // userStore.user?.profilePicture ? userStore.user?.profilePicture :
           ProfilePicture

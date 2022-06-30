@@ -6,14 +6,6 @@
   @apply select-none cursor-default;
 }
 
-.pfp {
-  border-radius: 1rem;
-  transition: border-radius 100ms linear;
-}
-.pfp:hover {
-  border-radius: 10px;
-}
-
 @font-face {
   font-family: GabrielSans;
   font-weight: bold;
@@ -22,7 +14,7 @@
 
 @font-face {
   font-family: GabrielSans;
-  font-weight: medium;
+  font-weight: 500;
   src: url("./assets/fonts/Gabriel-Sans-Medium.otf");
 }
 

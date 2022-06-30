@@ -1,5 +1,6 @@
 import create from "zustand";
 import { persist } from "zustand/middleware";
+import { Conversation } from "../types";
 
 interface User {
   id: number;
@@ -57,3 +58,32 @@ export const useStore = create(
     }
   )
 );
+
+interface PinnedStore {
+  pinnedConversations: Conversation[] | null;
+  addPinnedConversation: (conversation: any) => void;
+  removePinnedConversation: (conversation: any) => void;
+}
+
+export const usePinnedStore = create<PinnedStore>((set) => ({
+  pinnedConversations: null,
+  addPinnedConversation(conversation: Conversation) {
+    set((state) => {
+      return {
+        pinnedConversations: [
+          ...(state.pinnedConversations || []),
+          conversation,
+        ],
+      };
+    });
+  },
+  removePinnedConversation(conversation: Conversation) {
+    set((state) => {
+      return {
+        pinnedConversations: state.pinnedConversations?.filter(
+          (c) => c.id !== conversation.id
+        ),
+      };
+    });
+  },
+}));

@@ -15,13 +15,19 @@ import UserModal from "./components/ProfileModal";
 import SettingsModal from "./components/SettingsModal";
 import SideBar from "./components/SideBar";
 import SocketContext from "./socketContext";
-import { useStore } from "./store/useStore";
+import { usePinnedStore, useStore } from "./store/useStore";
 import { Conversation as ConversationType } from "./types";
 
 const socket = io("http://localhost:8900/", { autoConnect: false });
 
 export const App = () => {
   const { auth, settings } = useStore();
+  const {
+    pinnedConversations,
+    addPinnedConversation,
+    removePinnedConversation,
+  } = usePinnedStore();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -126,6 +132,38 @@ export const App = () => {
                   dark:text-tertiary-dark ml-px"
                     >
                       <h4 className="text-xs tracking-tighter leading-none transform translate-y-0.5">
+                        PINNED MESSAGES
+                        {conversations && (
+                          <span className="text-brand-blue ml-2">
+                            ({pinnedConversations?.length})
+                          </span>
+                        )}
+                      </h4>
+                    </div>
+
+                    <div className="flex flex-col gap-3 mt-6 pb-12 mx-px">
+                      {pinnedConversations
+                        ? pinnedConversations.map((conversation) => (
+                            <Conversation
+                              onMiddleClick={() => {
+                                removePinnedConversation(conversation);
+                              }}
+                              selectedConversation={selectedConversation}
+                              key={conversation.id}
+                              onClick={() =>
+                                setSelectedConversation(conversation)
+                              }
+                              conversation={conversation}
+                            />
+                          ))
+                        : null}
+                    </div>
+
+                    <div
+                      className="flex items-center justify-between text-tertiary-light
+                  dark:text-tertiary-dark ml-px"
+                    >
+                      <h4 className="text-xs tracking-tighter leading-none transform translate-y-0.5">
                         ALL MESSAGES
                         {conversations && (
                           <span className="text-brand-blue ml-2">
@@ -160,6 +198,9 @@ export const App = () => {
                       {conversations
                         ? conversations.map((conversation) => (
                             <Conversation
+                              onMiddleClick={() => {
+                                addPinnedConversation(conversation);
+                              }}
                               selectedConversation={selectedConversation}
                               key={conversation.id}
                               onClick={() =>

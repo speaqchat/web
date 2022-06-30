@@ -51,12 +51,8 @@ const Friends = ({ openModal }: { openModal: () => void }) => {
   });
 
   const DisplayFriendReq = () => {
-    if (isLoadingFriendReq)
-      return (
-        <div className="flex-grow flex items-center justify-center">
-          <img src={LoaderIcon} className="animate-spin-cool" />
-        </div>
-      );
+    if (isLoadingFriendReq) return null;
+    if (!friendReq) return null;
 
     if (isErrorFriendReq)
       return (
@@ -64,8 +60,6 @@ const Friends = ({ openModal }: { openModal: () => void }) => {
           <h1 className="text-red-600 text-lg">Error loading friends.</h1>
         </div>
       );
-
-    if (!friendReq) return <div>error friends</div>;
 
     if (!friendReq.incoming[0] && !friendReq.outgoing[0]) return null;
 
