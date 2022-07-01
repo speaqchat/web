@@ -2,7 +2,7 @@ import React from "react";
 import { Friend } from "../types";
 import ProfilePicture from "../assets/img/profile_pic.png";
 import FriendIcon from "../assets/icon/user-plus.svg";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import { useStore } from "../store/useStore";
 
@@ -16,6 +16,20 @@ const FriendRequest = ({
   const { auth } = useStore();
 
   const queryClient = useQueryClient();
+
+  const { data: profilePicture, isLoading: isLoadingPicture } = useQuery(
+    ["profilePicture", user.id],
+    async () => {
+      const response = await fetch(`http://localhost:4000/picture/${user.id}`);
+
+      if (response.headers.get("Content-Type")?.includes("application/json"))
+        return null;
+
+      const imgBlob = await response.blob();
+
+      return URL.createObjectURL(imgBlob);
+    }
+  );
 
   const acceptFriendMutation = useMutation(
     () => {
@@ -33,11 +47,9 @@ const FriendRequest = ({
   );
 
   return (
-    <div
-      className="mx-6 p-4 dark:bg-secondary-dark shadow rounded flex gap-4 items-center"
-    >
+    <div className="mx-6 p-4 dark:bg-secondary-dark shadow rounded flex gap-4 items-center">
       <img
-        src={user.profilePicture ? user.profilePicture : ProfilePicture}
+        src={profilePicture ? profilePicture : ProfilePicture}
         alt={`${user.username}'s profile picture`}
         className="w-12 h-12 rounded"
       />

@@ -1,10 +1,27 @@
 import { motion } from "framer-motion";
+import { useQuery } from "react-query";
 import ProfilePicture from "../assets/img/profile_pic.png";
 import { useStore } from "../store/useStore";
 import { Message as MessageType } from "../types";
 
 const Message = ({ message }: { message: MessageType }) => {
   const { auth } = useStore();
+
+  const { data: profilePicture, isLoading: isLoadingPicture } = useQuery(
+    ["profilePicture", message.sender.id],
+    async () => {
+      const response = await fetch(
+        `http://localhost:4000/picture/${message.sender.id}`
+      );
+
+      if (response.headers.get("Content-Type")?.includes("application/json"))
+        return null;
+
+      const imgBlob = await response.blob();
+
+      return URL.createObjectURL(imgBlob);
+    }
+  );
 
   return message.sender.username !== auth?.user?.username ? (
     <motion.div
@@ -13,15 +30,14 @@ const Message = ({ message }: { message: MessageType }) => {
       className="rounded-b-md group max-w-xl"
     >
       <div className="flex gap-2">
-        <img
-          className="w-10 h-10 rounded-full"
-          src={
-            message.sender.profilePicture
-              ? message.sender.profilePicture
-              : ProfilePicture
-          }
-          alt={`${message.sender.username}'s profile picture`}
-        />
+        <div className={isLoadingPicture ? "animate-pulse" : ""}>
+          <img
+            className="w-10 h-10 rounded-full"
+            src={profilePicture ? profilePicture : ProfilePicture}
+            alt={`${message.sender.username}'s profile picture`}
+          />
+        </div>
+
         <div className="px-4 py-3 bg-[#e9e9e9] dark:bg-secondary-dark rounded-r-2xl rounded-b-2xl">
           <h4 className="font-bold leading-none">{message.sender.username}</h4>
           <hr className="opacity-10 my-2" />
@@ -50,11 +66,7 @@ const Message = ({ message }: { message: MessageType }) => {
       <div className="flex flex-row-reverse gap-2">
         <img
           className="w-10 h-10 rounded-full"
-          src={
-            message.sender.profilePicture
-              ? message.sender.profilePicture
-              : ProfilePicture
-          }
+          src={profilePicture ? profilePicture : ProfilePicture}
           alt={`${message.sender.username}'s profile picture`}
         />
         <div className="px-4 py-3 bg-[#e9e9e9] dark:bg-secondary-dark rounded-l-2xl rounded-b-2xl">
