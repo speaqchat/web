@@ -1,4 +1,5 @@
 import React from "react";
+import { useQuery } from "react-query";
 import ProfilePicture from "../assets/img/profile_pic.png";
 import { useStore } from "../store/useStore";
 import { Conversation as ConversationType } from "../types";
@@ -21,6 +22,22 @@ const Conversation = ({
       ? conversation.user
       : conversation.friend;
 
+  const { data: profilePicture, isLoading: isLoadingPicture } = useQuery(
+    ["profilePicture", otherUser.id],
+    async () => {
+      const response = await fetch(
+        `http://localhost:4000/picture/${otherUser.id}`
+      );
+
+      if (response.headers.get("Content-Type")?.includes("application/json"))
+        return null;
+
+      const imgBlob = await response.blob();
+
+      return URL.createObjectURL(imgBlob);
+    }
+  );
+
   return (
     <div
       onClick={onClick}
@@ -32,11 +49,14 @@ const Conversation = ({
           : " border border-transparent")
       }
     >
-      <img
-        className="w-10 h-10 m-2 rounded-full object-fill"
-        alt=""
-        src={ProfilePicture}
-      />
+      <div className={isLoadingPicture ? "animate-pulse" : ""}>
+        <img
+          className="w-10 h-10 m-2 rounded-full object-fill"
+          alt=""
+          src={profilePicture ? profilePicture : ProfilePicture}
+        />
+      </div>
+
       <div className="flex flex-col ml-2">
         <h5 className="font-medium text-sm">{otherUser.username}</h5>
       </div>

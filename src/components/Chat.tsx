@@ -1,8 +1,10 @@
 import axios from "axios";
+import { profile } from "console";
 import { AnimatePresence } from "framer-motion";
 import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Socket } from "socket.io-client";
+import { ReadStream } from "tty";
 import ProfilePicture from "../assets/img/profile_pic.png";
 import { useStore } from "../store/useStore";
 import { Conversation, Message as MessageType } from "../types";
@@ -25,6 +27,34 @@ const Chat = ({
       ? conversation.user
       : conversation.friend;
 
+  const { data: profilePicture, isLoading: isLoadingPicture } = useQuery(
+    ["profilePicture", otherUser.id],
+    async () => {
+      const response = await fetch(
+        `http://localhost:4000/picture/${otherUser.id}`
+      );
+
+      if (response.headers.get("Content-Type")?.includes("application/json"))
+        return null;
+
+      const imgBlob = await response.blob();
+
+      return URL.createObjectURL(imgBlob);
+
+      // const res = await axios.get(`/picture/${otherUser.id}`, {
+      //   responseType: "stream",
+      // });
+
+      // return res.data;
+      // const blob = new Blob([res.data], {
+      //   type: "image/png",
+      // });
+
+      // return blob;
+      // return res.data;
+    }
+  );
+
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   const inputElement = useRef<HTMLInputElement | null>(null);
@@ -38,6 +68,7 @@ const Chat = ({
         conversationId: conversation.id,
       },
     });
+
     return res.data;
   };
 
@@ -105,10 +136,7 @@ const Chat = ({
         conversation: conversation,
         createdAt: new Date(),
         id: Math.random(),
-        senderId:
-          conversation.friendId !== auth?.user.id
-            ? conversation.friendId
-            : auth?.user.id,
+        senderId,
         sender:
           conversation.friendId !== auth?.user.id
             ? conversation.friend
@@ -144,16 +172,14 @@ const Chat = ({
               className="h-24 ml-6 flex items-center gap-4 hover:opacity-80 transition-opacity cursor-pointer"
             >
               <div className="w-10 h-10 relative">
-                <img
-                  className="object-fill w-full h-full rounded-full"
-                  src={
-                    otherUser.profilePicture
-                      ? otherUser.profilePicture
-                      : ProfilePicture
-                  }
-                  alt=""
-                />
-                <span className="absolute right-0 bottom-0 z-10 w-3 h-3 rounded-full bg-green-400"></span>
+                <div className={isLoadingPicture ? "animate-pulse" : ""}>
+                  <img
+                    className="object-fill w-full h-full rounded-full"
+                    src={profilePicture ? profilePicture : ProfilePicture}
+                    alt=""
+                  />
+                  <span className="absolute right-0 bottom-0 z-10 w-3 h-3 rounded-full bg-green-400"></span>
+                </div>
               </div>
               <div>
                 <h1 className="font-medium text-xl tracking-tight leading-none">

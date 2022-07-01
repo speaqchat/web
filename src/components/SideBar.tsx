@@ -1,5 +1,7 @@
 import React from "react";
+import { useQuery } from "react-query";
 import ProfilePicture from "../assets/img/profile_pic.png";
+import { useStore } from "../store/useStore";
 
 const SideBar = ({
   onClick,
@@ -12,20 +14,37 @@ const SideBar = ({
   profileOnClick: React.MouseEventHandler;
   selectedPage: "Home" | "Friends";
 }) => {
+  const { auth } = useStore();
+
+  const { data: profilePicture, isLoading: isLoadingPicture } = useQuery(
+    ["profilePicture", auth?.user.id],
+    async () => {
+      const response = await fetch(
+        `http://localhost:4000/picture/${auth?.user.id}`
+      );
+
+      if (response.headers.get("Content-Type")?.includes("application/json"))
+        return null;
+
+      const imgBlob = await response.blob();
+
+      return URL.createObjectURL(imgBlob);
+    }
+  );
+
   return (
     <div
       className="flex flex-col flex-shrink-0 items-center w-20 h-screen
     border-tertiary-light dark:border-tertiary-dark border-r"
     >
-      <img
-        onClick={profileOnClick}
-        className="w-12 h-12 object-cover my-6 shadow-md hover:shadow-2xl hover:opacity-80
+      <div className={isLoadingPicture ? "animate-pulse" : ""}>
+        <img
+          onClick={profileOnClick}
+          className="w-12 h-12 object-cover my-6 shadow-md hover:shadow-2xl hover:opacity-80
       cursor-pointer hover:rounded-md rounded-2xl transition-[border-radius] duration-200 ease-in-out"
-        src={
-          // userStore.user?.profilePicture ? userStore.user?.profilePicture :
-          ProfilePicture
-        }
-      />
+          src={profilePicture ? profilePicture : ProfilePicture}
+        />
+      </div>
       <div className="h-px w-1/2 bg-tertiary-light dark:bg-tertiary-dark"></div>
 
       <div className="flex flex-col gap-6 mt-6">
