@@ -1,13 +1,11 @@
 import axios from "axios";
-import { profile } from "console";
 import { AnimatePresence } from "framer-motion";
-import { MouseEventHandler, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Socket } from "socket.io-client";
-import { ReadStream } from "tty";
 import ProfilePicture from "../assets/img/profile_pic.png";
 import { useStore } from "../store/useStore";
-import { Conversation, Message as MessageType } from "../types";
+import { Conversation, Friend, Message as MessageType } from "../types";
 import EmojiPicker from "./EmojiPicker";
 import Message from "./Message";
 
@@ -17,7 +15,7 @@ const Chat = ({
   socket,
 }: {
   conversation: Conversation;
-  handleProfileClick: MouseEventHandler<HTMLDivElement>;
+  handleProfileClick: (user: Friend) => void;
   socket: Socket | null;
 }) => {
   const { auth } = useStore();
@@ -168,7 +166,7 @@ const Chat = ({
         <div className="bg-primary-light dark:bg-primary-dark pr-6 w-full">
           <div className="flex flex-col">
             <div
-              onClick={handleProfileClick}
+              onClick={() => handleProfileClick(otherUser)}
               className="h-24 ml-6 flex items-center gap-4 hover:opacity-80 transition-opacity cursor-pointer"
             >
               <div className="w-10 h-10 relative">

@@ -16,11 +16,13 @@ import SettingsModal from "./components/SettingsModal";
 import SideBar from "./components/SideBar";
 import SocketContext from "./socketContext";
 import { usePinnedStore, useStore } from "./store/useStore";
-import { Conversation as ConversationType } from "./types";
+import { Conversation as ConversationType, Friend } from "./types";
 
 const socket = io("http://localhost:8900/", { autoConnect: false });
 
 export const App = () => {
+  const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
+
   const { auth, settings } = useStore();
   const {
     pinnedConversations,
@@ -82,7 +84,10 @@ export const App = () => {
           <SideBar
             selectedPage={selectedPage}
             onClick={(page: "Home" | "Friends") => setSelectedPage(page)}
-            profileOnClick={() => setUserModalVisible(true)}
+            profileOnClick={() => {
+              setSelectedUser(auth?.user as Friend);
+              setUserModalVisible(true);
+            }}
             settingsOnClick={() => setSettingsModalVisible(true)}
           />
           <div className="">
@@ -127,23 +132,23 @@ export const App = () => {
                   <div className="h-px w-full bg-tertiary-light dark:bg-tertiary-dark flex-shrink-0"></div>
 
                   <div className="mt-6 h-full flex-grow overflow-visible">
-                    <div
-                      className="flex items-center justify-between text-tertiary-light
+                    {pinnedConversations && pinnedConversations.length > 0 ? (
+                      <>
+                        <div
+                          className="flex items-center justify-between text-tertiary-light
                   dark:text-tertiary-dark ml-px"
-                    >
-                      <h4 className="text-xs tracking-tighter leading-none transform translate-y-0.5">
-                        PINNED MESSAGES
-                        {conversations && (
-                          <span className="text-brand-blue ml-2">
-                            ({pinnedConversations?.length})
-                          </span>
-                        )}
-                      </h4>
-                    </div>
-
-                    <div className="flex flex-col gap-3 mt-6 pb-12 mx-px">
-                      {pinnedConversations
-                        ? pinnedConversations.map((conversation) => (
+                        >
+                          <h4 className="text-xs tracking-tighter leading-none transform translate-y-0.5">
+                            PINNED MESSAGES
+                            {conversations && (
+                              <span className="text-brand-blue ml-2">
+                                ({pinnedConversations?.length})
+                              </span>
+                            )}
+                          </h4>
+                        </div>
+                        <div className="flex flex-col gap-3 mt-6 pb-4 mx-px">
+                          {pinnedConversations.map((conversation) => (
                             <Conversation
                               onMiddleClick={() => {
                                 removePinnedConversation(conversation);
@@ -155,9 +160,10 @@ export const App = () => {
                               }
                               conversation={conversation}
                             />
-                          ))
-                        : null}
-                    </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : null}
 
                     <div
                       className="flex items-center justify-between text-tertiary-light
@@ -203,9 +209,9 @@ export const App = () => {
                               }}
                               selectedConversation={selectedConversation}
                               key={conversation.id}
-                              onClick={() =>
-                                setSelectedConversation(conversation)
-                              }
+                              onClick={() => {
+                                setSelectedConversation(conversation);
+                              }}
                               conversation={conversation}
                             />
                           ))
@@ -221,7 +227,15 @@ export const App = () => {
               {(socket) => (
                 <Chat
                   socket={socket}
-                  handleProfileClick={() => setUserModalVisible(true)}
+                  handleProfileClick={(user) => {
+                    setSelectedUser(user);
+                    // setSelectedUser(
+                    //   selectedConversation.userId === auth?.user.id
+                    //     ? selectedConversation.friend
+                    //     : selectedConversation.user
+                    // );
+                    setUserModalVisible(true);
+                  }}
                   conversation={selectedConversation}
                 />
               )}
@@ -233,17 +247,13 @@ export const App = () => {
         </div>
 
         <AnimatePresence>
-          {selectedConversation?.friend && userModalVisible ? (
+          {selectedConversation?.friend && userModalVisible && selectedUser ? (
             <UserModal
               onClick={(e) => {
                 e.stopPropagation();
                 setUserModalVisible(false);
               }}
-              user={
-                selectedConversation.user.id !== auth?.user.id
-                  ? selectedConversation.user
-                  : selectedConversation.friend
-              }
+              user={selectedUser}
             />
           ) : null}
           {settingsModalVisible ? (
