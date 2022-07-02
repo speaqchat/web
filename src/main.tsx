@@ -8,7 +8,7 @@ import "./index.css";
 import Login from "./pages/Login";
 
 // const API_URL = "http://api.speaq.site:4000/";
-const API_URL = "http://localhost:4000/";
+const API_URL = "https://speaq-api.herokuapp.com/";
 
 axios.defaults.baseURL = API_URL;
 

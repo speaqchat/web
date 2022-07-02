@@ -26,7 +26,7 @@ const Conversation = ({
     ["profilePicture", otherUser.id],
     async () => {
       const response = await fetch(
-        `http://localhost:4000/picture/${otherUser.id}`
+        `https://speaq-api.herokuapp.com/picture/${otherUser.id}`
       );
 
       if (response.headers.get("Content-Type")?.includes("application/json"))

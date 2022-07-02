@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import ProfilePicture from "../assets/img/profile_pic.png";
 import PictureIcon from "../assets/icon/image.svg";
@@ -7,6 +7,7 @@ import { useStore } from "../store/useStore";
 import { Friend } from "../types";
 import axios from "axios";
 import LoaderIcon from "../assets/icon/loader.svg";
+import ProgressBar from "./ProgressBar";
 
 const UserModal = ({
   user,
@@ -16,6 +17,8 @@ const UserModal = ({
   onClick: React.MouseEventHandler<HTMLDivElement>;
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const [progress, setProgress] = useState(0);
 
   const queryClient = useQueryClient();
 
@@ -41,6 +44,9 @@ const UserModal = ({
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        onUploadProgress: (e) => {
+          setProgress(Math.round((e.loaded * 100) / e.total));
+        },
       });
 
       return res.data;
@@ -50,7 +56,9 @@ const UserModal = ({
   const { data: profilePicture, isLoading: isLoadingPicture } = useQuery(
     ["profilePicture", user.id],
     async () => {
-      const response = await fetch(`http://localhost:4000/picture/${user.id}`);
+      const response = await fetch(
+        `https://speaq-api.herokuapp.com/picture/${user.id}`
+      );
 
       if (response.headers.get("Content-Type")?.includes("application/json"))
         return null;
@@ -129,6 +137,14 @@ const UserModal = ({
             </p>
           </div>
         </div>
+
+        <AnimatePresence>
+          {isLoading && (
+            <div className="mt-2">
+              <ProgressBar progress={progress} />
+            </div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );

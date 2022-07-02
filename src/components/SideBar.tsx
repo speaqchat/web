@@ -20,7 +20,7 @@ const SideBar = ({
     ["profilePicture", auth?.user.id],
     async () => {
       const response = await fetch(
-        `http://localhost:4000/picture/${auth?.user.id}`
+        `https://speaq-api.herokuapp.com/picture/${auth?.user.id}`
       );
 
       if (response.headers.get("Content-Type")?.includes("application/json"))

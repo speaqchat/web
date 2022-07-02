@@ -20,7 +20,9 @@ const FriendRequest = ({
   const { data: profilePicture, isLoading: isLoadingPicture } = useQuery(
     ["profilePicture", user.id],
     async () => {
-      const response = await fetch(`http://localhost:4000/picture/${user.id}`);
+      const response = await fetch(
+        `https://speaq-api.herokuapp.com/picture/${user.id}`
+      );
 
       if (response.headers.get("Content-Type")?.includes("application/json"))
         return null;
