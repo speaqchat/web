@@ -38,18 +38,6 @@ const Chat = ({
       const imgBlob = await response.blob();
 
       return URL.createObjectURL(imgBlob);
-
-      // const res = await axios.get(`/picture/${otherUser.id}`, {
-      //   responseType: "stream",
-      // });
-
-      // return res.data;
-      // const blob = new Blob([res.data], {
-      //   type: "image/png",
-      // });
-
-      // return blob;
-      // return res.data;
     }
   );
 
@@ -84,14 +72,9 @@ const Chat = ({
       if (content.trim().length === 0) throw new Error();
       inputElement.current!.value = "";
 
-      // console.log(socket);
-
       socket?.emit("sendMessage", {
         senderId: auth?.user.id,
-        receiverId:
-          conversation.friendId !== auth?.user.id
-            ? conversation.friendId
-            : conversation.userId,
+        receiverId: otherUser.id,
         text: content,
       });
 
@@ -124,36 +107,18 @@ const Chat = ({
   socket?.on("getMessage", ({ senderId, text }) => {
     if (!auth?.user) return;
 
-    console.log(`${senderId}: ${text}`);
-
     queryClient.setQueryData(
       ["messages", conversation.id],
       (messages || []).concat({
         content: text,
-        conversationId: conversation.id,
         conversation: conversation,
+        conversationId: conversation.id,
         createdAt: new Date(),
         id: Math.random(),
+        sender: otherUser,
         senderId,
-        sender:
-          conversation.friendId !== auth?.user.id
-            ? conversation.friend
-            : auth?.user,
       })
     );
-
-    // messages?.push({
-    //   content: text,
-    //   conversationId: conversation.id,
-    //   conversation: conversation,
-    //   createdAt: new Date(),
-    //   id: 99,
-    //   senderId,
-    //   sender:
-    //     conversation.friendId !== auth?.user.id
-    //       ? conversation.friend
-    //       : auth?.user,
-    // });
   });
 
   useEffect(() => {

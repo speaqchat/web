@@ -18,7 +18,9 @@ import SocketContext from "./socketContext";
 import { usePinnedStore, useStore } from "./store/useStore";
 import { Conversation as ConversationType, Friend } from "./types";
 
-const socket = io("http://localhost:8900/", { autoConnect: false });
+const socket = io("https://speaq-socket.herokuapp.com", {
+  autoConnect: false,
+});
 
 export const App = () => {
   const [selectedUser, setSelectedUser] = useState<Friend | null>(null);

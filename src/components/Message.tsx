@@ -24,7 +24,7 @@ const Message = ({ message }: { message: MessageType }) => {
     }
   );
 
-  return message.sender.username !== auth?.user?.username ? (
+  return message.senderId !== auth?.user.id ? (
     <motion.div
       initial={{ opacity: 0, scale: 0.6 }}
       animate={{ opacity: 1, scale: 1 }}
