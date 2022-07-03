@@ -66,10 +66,10 @@ export const App = () => {
   );
 
   useEffect(() => {
-    if (auth) {
-      socket.connect();
-      socket.emit("addUser", auth.user.id);
-    }
+    if (!auth) return;
+
+    socket.connect();
+    socket.emit("addUser", auth.user.id);
   }, []);
 
   useEffect(() => {
@@ -87,7 +87,6 @@ export const App = () => {
             selectedPage={selectedPage}
             onClick={(page: "Home" | "Friends") => setSelectedPage(page)}
             profileOnClick={() => {
-              setSelectedUser(auth?.user as Friend);
               setUserModalVisible(true);
             }}
             settingsOnClick={() => setSettingsModalVisible(true)}
@@ -249,7 +248,7 @@ export const App = () => {
         </div>
 
         <AnimatePresence>
-          {selectedConversation?.friend && userModalVisible && selectedUser ? (
+          {userModalVisible && selectedUser ? (
             <UserModal
               onClick={(e) => {
                 e.stopPropagation();
