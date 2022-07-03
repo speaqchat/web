@@ -66,9 +66,9 @@ export const App = () => {
   );
 
   useEffect(() => {
-    setSelectedUser(auth?.user as Friend);
-
     if (!auth) return;
+
+    setSelectedUser(auth.user as Friend);
 
     socket.connect();
     socket.emit("addUser", auth.user.id);
