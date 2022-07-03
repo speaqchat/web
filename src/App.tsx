@@ -89,6 +89,7 @@ export const App = () => {
             selectedPage={selectedPage}
             onClick={(page: "Home" | "Friends") => setSelectedPage(page)}
             profileOnClick={() => {
+              setSelectedUser(auth?.user as Friend);
               setUserModalVisible(true);
             }}
             settingsOnClick={() => setSettingsModalVisible(true)}
