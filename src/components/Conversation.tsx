@@ -9,11 +9,13 @@ const Conversation = ({
   onClick,
   selectedConversation,
   onMiddleClick,
+  onContextMenu,
 }: {
   conversation: ConversationType;
   onClick: React.MouseEventHandler<HTMLDivElement>;
   selectedConversation: ConversationType | null;
   onMiddleClick: () => void;
+  onContextMenu: React.MouseEventHandler<HTMLDivElement>;
 }) => {
   const { auth } = useStore();
 
@@ -41,6 +43,7 @@ const Conversation = ({
   return (
     <div
       onClick={onClick}
+      onContextMenu={onContextMenu}
       onAuxClick={(e) => e.button === 1 && onMiddleClick()}
       className={
         "cursor-pointer w-full h-14 bg-primary-light  dark:bg-primary-dark rounded transition-shadow shadow hover:bg-opacity-80 hover:shadow-md flex items-center " +
