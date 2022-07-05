@@ -63,6 +63,7 @@ interface PinnedStore {
   pinnedConversations: Conversation[] | null;
   addPinnedConversation: (conversation: any) => void;
   removePinnedConversation: (conversation: any) => void;
+  clearPinned: () => void;
 }
 
 export const usePinnedStore = create<PinnedStore>((set) => ({
@@ -86,4 +87,11 @@ export const usePinnedStore = create<PinnedStore>((set) => ({
       };
     });
   },
+  clearPinned() {
+    set(() => {
+      return {
+        pinnedConversations: null
+      }
+    })
+  }
 }));

@@ -9,6 +9,7 @@ import LoaderIcon from "./assets/icon/loader.svg";
 import CloseIcon from "./assets/icon/x.svg";
 import AddFriendModal from "./components/AddFriendModal";
 import Chat from "./components/Chat";
+import ContextMenu from "./components/ContextMenu";
 import Conversation from "./components/Conversation";
 import Friends from "./components/Friends";
 import UserModal from "./components/ProfileModal";
@@ -37,6 +38,7 @@ export const App = () => {
     pinnedConversations,
     addPinnedConversation,
     removePinnedConversation,
+    clearPinned,
   } = usePinnedStore();
 
   const isOnline = useOnline();
@@ -117,8 +119,25 @@ export const App = () => {
     if (conversations) setSelectedConversation(conversations[0]);
   }, [conversations]);
 
+  const [contextMenuShown, setContextMenuShown] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState<{
+    x: number;
+    y: number;
+  }>({ x: 0, y: 0 });
+  const [contextMenuConversation, setContextMenuConversation] =
+    useState<ConversationType | null>(null);
+
   return auth ? (
     <SocketContext.Provider value={socket}>
+      <AnimatePresence>
+        {contextMenuShown ? (
+          <ContextMenu
+            conversation={contextMenuConversation}
+            handleBlur={() => setContextMenuShown(false)}
+            position={contextMenuPosition}
+          />
+        ) : null}
+      </AnimatePresence>
       <div className={settings.darkMode ? "dark" : ""}>
         <div
           className="flex w-screen h-screen bg-primary-light text-primary-dark
@@ -189,10 +208,39 @@ export const App = () => {
                               </span>
                             )}
                           </h4>
+
+                          <div
+                            className="relative group"
+                            onClick={() => clearPinned()}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-[18px] w-[18px] text-tertiary-light dark:text-tertiary-dark cursor-pointer
+                              hover:opacity-80 transition-opacity"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="3 6 5 6 21 6"></polyline>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                          </div>
                         </div>
                         <div className="flex flex-col gap-3 mt-6 pb-4 mx-px">
                           {pinnedConversations.map((conversation) => (
                             <Conversation
+                              onContextMenu={(e) => {
+                                e.preventDefault();
+                                setContextMenuConversation(conversation);
+                                setContextMenuShown(true);
+                                setContextMenuPosition({
+                                  x: e.pageX,
+                                  y: e.pageY,
+                                });
+                              }}
                               onMiddleClick={() => {
                                 removePinnedConversation(conversation);
                               }}
@@ -247,6 +295,15 @@ export const App = () => {
                       {conversations
                         ? conversations.map((conversation) => (
                             <Conversation
+                              onContextMenu={(e) => {
+                                e.preventDefault();
+                                setContextMenuConversation(conversation);
+                                setContextMenuShown(true);
+                                setContextMenuPosition({
+                                  x: e.clientX,
+                                  y: e.clientY,
+                                });
+                              }}
                               onMiddleClick={() => {
                                 addPinnedConversation(conversation);
                               }}
