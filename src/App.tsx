@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useOnline } from "rooks";
 import { io } from "socket.io-client";
@@ -16,27 +16,28 @@ import SettingsModal from "./components/SettingsModal";
 import SideBar from "./components/SideBar";
 import SocketContext from "./socketContext";
 import { usePinnedStore, useStore } from "./store/useStore";
-import { Conversation as ConversationType, Friend } from "./types";
+import { Conversation as ConversationType, Friend, Message } from "./types";
 
 const socket = io("https://speaq-socket.herokuapp.com", {
   autoConnect: false,
 });
 
-export const App = () => {
-  const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
+const LoggedOut = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate("/login");
+  }, []);
+  return null;
+};
 
+export const App = () => {
   const { auth, settings } = useStore();
+
   const {
     pinnedConversations,
     addPinnedConversation,
     removePinnedConversation,
   } = usePinnedStore();
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!auth) navigate("/login");
-  }, [auth]);
 
   const isOnline = useOnline();
 
@@ -48,6 +49,7 @@ export const App = () => {
   const [selectedPage, setSelectedPage] = useState<"Home" | "Friends">("Home");
   const [selectedConversation, setSelectedConversation] =
     useState<null | ConversationType>(null);
+  const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
 
   useEffect(() => {
     if (isOnline !== null) setToastOpen(!isOnline);
@@ -65,20 +67,57 @@ export const App = () => {
     fetchConversations
   );
 
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (!auth) return;
 
     setSelectedUser(auth.user as Friend);
 
     socket.connect();
-    socket.emit("addUser", auth.user.id);
+    socket.emit("addUser", auth?.user.id);
+
+    socket.on("getMessage", ({ senderId, text, conversationId }) => {
+      const conv = queryClient.getQueryData(
+        "conversations"
+      ) as ConversationType[];
+
+      const convToUpdate = conv.find((c) => c.id === conversationId);
+
+      const otherUser =
+        convToUpdate?.friendId === auth?.user.id
+          ? convToUpdate?.user
+          : convToUpdate?.friend;
+
+      if (!conv || !convToUpdate || !otherUser) return;
+
+      const messages = queryClient.getQueryData([
+        "messages",
+        conversationId,
+      ]) as Message[];
+
+      queryClient.setQueryData(
+        ["messages", conversationId],
+        (messages || []).concat([
+          {
+            content: text,
+            senderId,
+            conversation: convToUpdate,
+            conversationId,
+            createdAt: new Date(),
+            id: Math.random(),
+            sender: otherUser,
+          },
+        ])
+      );
+    });
   }, []);
 
   useEffect(() => {
     if (conversations) setSelectedConversation(conversations[0]);
   }, [conversations]);
 
-  return (
+  return auth ? (
     <SocketContext.Provider value={socket}>
       <div className={settings.darkMode ? "dark" : ""}>
         <div
@@ -277,5 +316,7 @@ export const App = () => {
         </AnimatePresence>
       </div>
     </SocketContext.Provider>
+  ) : (
+    <LoggedOut />
   );
 };

@@ -76,6 +76,7 @@ const Chat = ({
         senderId: auth?.user.id,
         receiverId: otherUser.id,
         text: content,
+        conversationId: conversation.id,
       });
 
       return axios.post("/message", {
@@ -86,7 +87,7 @@ const Chat = ({
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["messages", conversation.id]);
+        queryClient.refetchQueries(["messages", conversation.id]);
       },
     }
   );
@@ -103,23 +104,6 @@ const Chat = ({
       scrollElement.current.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
     }
   };
-
-  socket?.on("getMessage", ({ senderId, text }) => {
-    if (!auth?.user) return;
-
-    queryClient.setQueryData(
-      ["messages", conversation.id],
-      (messages || []).concat({
-        content: text,
-        conversation: conversation,
-        conversationId: conversation.id,
-        createdAt: new Date(),
-        id: Math.random(),
-        sender: otherUser,
-        senderId,
-      })
-    );
-  });
 
   useEffect(() => {
     scrollToBottom();
