@@ -7,7 +7,13 @@ import ProfilePicture from "../assets/img/profile_pic.png";
 import { useStore } from "../store/useStore";
 import { Friend as FriendType } from "../types";
 
-const Friend = ({ user }: { user: FriendType }) => {
+const Friend = ({
+  user,
+  onAddConversation,
+}: {
+  user: FriendType;
+  onAddConversation: () => void;
+}) => {
   const { data: profilePicture, isLoading: isLoadingPicture } = useQuery(
     ["profilePicture", user.id],
     async () => {
@@ -37,6 +43,7 @@ const Friend = ({ user }: { user: FriendType }) => {
   });
 
   const addConversationMutation = useMutation(() => {
+    onAddConversation();
     return axios.post("/conversation", {
       userId: auth?.user.id,
       friendId: user.id,

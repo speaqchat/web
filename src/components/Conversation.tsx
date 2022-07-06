@@ -1,8 +1,8 @@
-import React from "react";
-import { useQuery } from "react-query";
+import React, { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import ProfilePicture from "../assets/img/profile_pic.png";
 import { useStore } from "../store/useStore";
-import { Conversation as ConversationType } from "../types";
+import { Conversation as ConversationType, Message } from "../types";
 
 const Conversation = ({
   conversation,
@@ -23,6 +23,23 @@ const Conversation = ({
     conversation.user.id !== auth?.user.id
       ? conversation.user
       : conversation.friend;
+
+  const queryClient = useQueryClient();
+
+  const messages = queryClient.getQueryData(["messages", conversation.id]) as
+    | Message[]
+    | null;
+
+  const [lastMessage, setLastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (messages) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.senderId !== auth?.user.id) {
+        setLastMessage(lastMessage.content);
+      }
+    }
+  }, [messages]);
 
   const { data: profilePicture, isLoading: isLoadingPicture } = useQuery(
     ["profilePicture", otherUser.id],
@@ -62,6 +79,7 @@ const Conversation = ({
 
       <div className="flex flex-col ml-2">
         <h5 className="font-medium text-sm">{otherUser.username}</h5>
+        {lastMessage && <p className="opacity-80 text-sm">"{lastMessage}"</p>}
       </div>
     </div>
   );

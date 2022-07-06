@@ -7,7 +7,13 @@ import { Friend } from "../types";
 import FriendItem from "./Friend";
 import FriendRequest from "./FriendRequest";
 
-const Friends = ({ openModal }: { openModal: () => void }) => {
+const Friends = ({
+  openModal,
+  onAddConversation,
+}: {
+  openModal: () => void;
+  onAddConversation: () => void;
+}) => {
   const { auth } = useStore();
 
   const fetchFriendReq = async (): Promise<any> => {
@@ -127,7 +133,11 @@ const Friends = ({ openModal }: { openModal: () => void }) => {
     return (
       <div className="flex flex-col mt-6 gap-4">
         {friends.map((friend) => (
-          <FriendItem key={friend.id} user={friend} />
+          <FriendItem
+            onAddConversation={onAddConversation}
+            key={friend.id}
+            user={friend}
+          />
         ))}
       </div>
     );

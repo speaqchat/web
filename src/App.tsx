@@ -329,11 +329,6 @@ export const App = () => {
                   socket={socket}
                   handleProfileClick={(user) => {
                     setSelectedUser(user);
-                    // setSelectedUser(
-                    //   selectedConversation.userId === auth?.user.id
-                    //     ? selectedConversation.friend
-                    //     : selectedConversation.user
-                    // );
                     setUserModalVisible(true);
                   }}
                   conversation={selectedConversation}
@@ -342,7 +337,12 @@ export const App = () => {
             </SocketContext.Consumer>
           ) : null}
           {selectedPage === "Friends" && (
-            <Friends openModal={() => setAddFriendModalVisible(true)} />
+            <Friends
+              onAddConversation={() => {
+                setSelectedPage("Home");
+              }}
+              openModal={() => setAddFriendModalVisible(true)}
+            />
           )}
         </div>
 

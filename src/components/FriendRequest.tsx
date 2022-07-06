@@ -9,9 +9,11 @@ import { useStore } from "../store/useStore";
 const FriendRequest = ({
   user,
   type,
+  onAccept,
 }: {
   user: Friend;
   type: "incoming" | "outgoing";
+  onAccept?: () => void;
 }) => {
   const { auth } = useStore();
 
@@ -35,6 +37,8 @@ const FriendRequest = ({
 
   const acceptFriendMutation = useMutation(
     () => {
+      if (onAccept) onAccept();
+
       return axios.put("/acceptfriend", {
         userId: user.id,
         friendId: auth?.user.id,
