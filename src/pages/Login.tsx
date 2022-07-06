@@ -125,7 +125,7 @@ const Login = () => {
                 setEmail(e.target.value);
               }}
               type="text"
-              className="focus:outline-none px-3 mb-4 h-10 rounded-lg bg-secondary-dark border border-white border-opacity-10 focus:border-opacity-50 transition-[border] ease-in-out"
+              className="focus:outline-none font-normal px-3 mb-4 h-10 rounded-lg bg-secondary-dark border border-white border-opacity-10 focus:border-opacity-50 transition-[border] ease-in-out"
             />
             <label className="mb-2" htmlFor="password">
               Password
@@ -138,7 +138,7 @@ const Login = () => {
                 setPassword(e.target.value);
               }}
               type="password"
-              className="focus:outline-none px-3 mb-8 h-10 rounded-lg bg-secondary-dark border border-white border-opacity-10 focus:border-opacity-50 transition-[border] ease-in-out"
+              className="focus:outline-none font-normal px-3 mb-8 h-10 rounded-lg bg-secondary-dark border border-white border-opacity-10 focus:border-opacity-50 transition-[border] ease-in-out"
             />
             <button
               className="focus:outline-none focus:border-2 flex items-center justify-center mb-4 h-10 hover:opacity-80 transition-opacity bg-brand-blue rounded-lg font-medium"
