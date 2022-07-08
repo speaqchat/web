@@ -35,7 +35,7 @@ const Conversation = ({
   useEffect(() => {
     if (messages) {
       const lastMessage = messages[messages.length - 1];
-      if (lastMessage.senderId !== auth?.user.id) {
+      if (lastMessage && lastMessage.senderId !== auth?.user.id) {
         setLastMessage(lastMessage.content);
       }
     }
@@ -77,9 +77,13 @@ const Conversation = ({
         />
       </div>
 
-      <div className="flex flex-col ml-2">
-        <h5 className="font-medium text-sm">{otherUser.username}</h5>
-        {lastMessage && <p className="opacity-80 text-sm">"{lastMessage}"</p>}
+      <div className="flex flex-col ml-2 gap-1">
+        <h5 className="font-medium leading-none">{otherUser.username}</h5>
+        {lastMessage && (
+          <p className="opacity-80 text-sm leading-none font-normal w-24 truncate">
+            {lastMessage}
+          </p>
+        )}
       </div>
     </div>
   );
