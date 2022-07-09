@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
 import React, { useEffect, useRef } from "react";
+import { useOnClickOutside } from "../hooks/useOnClickOutside";
 
 const EmojiPicker = ({
   emojiClicked,
   onBlur,
 }: {
   emojiClicked: (emoji: string) => void;
-  onBlur: React.FocusEventHandler<HTMLDivElement>;
+  onBlur: () => void;
 }) => {
   const emojis = [
     "✌",
@@ -104,10 +105,7 @@ const EmojiPicker = ({
   ];
 
   const divRef = useRef<null | HTMLDivElement>(null);
-
-  useEffect(() => {
-    divRef.current?.focus();
-  }, []);
+  useOnClickOutside(divRef, onBlur);
 
   return (
     <motion.div
