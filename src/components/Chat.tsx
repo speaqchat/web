@@ -86,8 +86,35 @@ const Chat = ({
       });
     },
     {
-      onSuccess: () => {
-        queryClient.refetchQueries(["messages", conversation.id]);
+      onMutate: async (newMsg) => {
+        await queryClient.cancelQueries(["messages", conversation.id]);
+        const prevMsgs = queryClient.getQueryData<MessageType[]>([
+          "messages",
+          conversation.id,
+        ]);
+        queryClient.setQueryData(["messages", conversation.id], (old) => [
+          ...(old as any),
+          {
+            id: prevMsgs?.length ? prevMsgs[prevMsgs.length - 1].id + 1 : 0,
+            content: newMsg,
+            senderId: auth?.user?.id,
+            conversationId: conversation.id,
+            createdAt: new Date(),
+            sender: auth?.user as Friend,
+            conversation: conversation,
+          } as MessageType,
+        ]);
+
+        return { prevMsgs };
+      },
+      onError: (_, __, context) => {
+        queryClient.setQueryData(
+          ["messages", conversation.id],
+          context?.prevMsgs
+        );
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(["messages", conversation.id]);
       },
     }
   );

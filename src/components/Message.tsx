@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import ProfilePicture from "../assets/img/profile_pic.png";
 import { useStore } from "../store/useStore";
@@ -25,11 +25,7 @@ const Message = ({ message }: { message: MessageType }) => {
   );
 
   return message.senderId !== auth?.user.id ? (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.6 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="rounded-b-md group max-w-xl"
-    >
+    <motion.div className="rounded-b-md group max-w-xl">
       <div className="flex gap-2">
         <div
           className={
@@ -70,8 +66,6 @@ const Message = ({ message }: { message: MessageType }) => {
     </motion.div>
   ) : (
     <motion.div
-      initial={{ opacity: 0, scale: 0.6 }}
-      animate={{ opacity: 1, scale: 1 }}
       className="ml-auto rounded-b-md group max-w-xl mr-4"
     >
       <div className="flex flex-row-reverse gap-2">
