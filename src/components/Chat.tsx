@@ -148,7 +148,7 @@ const Chat = ({
               <div className="w-10 h-10 relative">
                 <div className={isLoadingPicture ? "animate-pulse" : ""}>
                   <img
-                    className="object-fill w-full h-full rounded-full"
+                    className="w-10 h-10 rounded-full"
                     src={profilePicture ? profilePicture : ProfilePicture}
                     alt=""
                   />
