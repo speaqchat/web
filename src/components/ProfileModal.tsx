@@ -37,6 +37,8 @@ const UserModal = ({
   const { mutateAsync, isLoading } = useMutation(
     "picture",
     async (picture: File) => {
+      if (!picture.type.includes("image")) return;
+
       const formData = new FormData();
       formData.append("picture", picture);
 
@@ -50,6 +52,12 @@ const UserModal = ({
       });
 
       return res.data;
+    },
+    {
+      onSuccess: () => {
+        setProgress(0);
+        queryClient.invalidateQueries(["profilePicture", user.id]);
+      },
     }
   );
 
