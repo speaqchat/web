@@ -15,6 +15,7 @@ import Friends from "./components/Friends";
 import UserModal from "./components/ProfileModal";
 import SettingsModal from "./components/SettingsModal";
 import SideBar from "./components/SideBar";
+import VideoCall from "./components/VideoCall";
 import SocketContext from "./socketContext";
 import { usePinnedStore, useStore } from "./store/useStore";
 import { Conversation as ConversationType, Friend, Message } from "./types";
@@ -112,6 +113,30 @@ export const App = () => {
           },
         ])
       );
+
+      if (Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+
+      const pfp = queryClient.getQueryData<any>([
+        "profilePicture",
+        otherUser.id,
+      ]);
+
+      // if notification is granted
+      if (Notification.permission === "granted") {
+        const notification = new Notification(
+          `${otherUser.username} sent you a message`,
+          {
+            body: text,
+            icon: pfp,
+          }
+        );
+        notification.onclick = () => {
+          window.focus();
+          notification.close();
+        };
+      }
     });
   }, []);
 
