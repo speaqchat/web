@@ -70,7 +70,7 @@ const Friends = ({
     if (!friendReq.incoming[0] && !friendReq.outgoing[0]) return null;
 
     return (
-      <div className="flex flex-col mt-6 gap-4">
+      <div className="flex-grow flex flex-col py-6 gap-4 overflow-auto h-[calc(100vh-96px)]">
         {friendReq.incoming[0] ? (
           <>
             <p className="ml-6 uppercase text-sm font-bold opacity-90">
@@ -114,15 +114,17 @@ const Friends = ({
 
     if (!friends) return <div>error friends</div>;
 
+    if (friends.length === 0 && friendReq.outgoing[0] || friendReq.incoming[0]) return null;
+
     if (!friends[0])
       return (
-        <div className="w-full flex-1 flex items-center justify-center">
+        <div className="h-[calc(100vh-96px)] flex items-center justify-center" >
           <div className="flex flex-col gap-2 items-center">
             <h1 className="text-lg">You haven't added any friends!</h1>
 
             <button
               onClick={() => openModal()}
-              className="bg-secondary-dark px-4 py-1 rounded shadow hover:opacity-80 transition-opacity"
+              className="dark:bg-secondary-dark bg-secondary-light px-4 py-1 rounded shadow hover:opacity-80 transition-opacity"
             >
               Add
             </button>
@@ -131,7 +133,8 @@ const Friends = ({
       );
 
     return (
-      <div className="flex flex-col mt-6 gap-4">
+      <div className="flex-grow flex flex-col mt-6 gap-4 overflow-auto">
+        <p className="ml-6 uppercase text-sm font-bold opacity-90">FRIENDS</p>
         {friends.map((friend) => (
           <FriendItem
             onAddConversation={onAddConversation}
@@ -144,23 +147,24 @@ const Friends = ({
   };
 
   return (
-    <>
-      <div className="flex flex-col w-full">
-        <div className="h-24 flex items-center justify-between pr-6">
-          <h1 className="font-medium text-2xl ml-6">Friends</h1>
-          <div
-            onClick={openModal}
-            className="rounded cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-secondary-light h-7 w-7 dark:bg-secondary-dark text-center leading-none"
-          >
-            <img className="dark:invert" src={FriendIcon} alt="" />
-          </div>
+    <div className="flex-grow">
+      <div className="h-24 flex items-center justify-between pr-6">
+        <h1 className="font-medium text-2xl ml-6">Friends</h1>
+        <div
+          onClick={openModal}
+          className="rounded cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center bg-secondary-light h-7 w-7 dark:bg-secondary-dark text-center leading-none"
+        >
+          <img className="dark:invert" src={FriendIcon} alt="" />
         </div>
-        <div className="bg-tertiary-dark h-px mx-6" />
+      </div>
+      <div className="bg-tertiary-dark h-px mx-6" />
+      <div className="flex w-full justify-between">
         <DisplayFriendReq />
         <DisplayFriends />
-        {/* {error && <div>error fetching friends</div>} */}
       </div>
-    </>
+
+      {/* {error && <div>error fetching friends</div>} */}
+    </div>
   );
 };
 

@@ -5,7 +5,6 @@ import { useQuery, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useOnline } from "rooks";
 import { io } from "socket.io-client";
-import LoaderIcon from "./assets/icon/loader.svg";
 import CloseIcon from "./assets/icon/x.svg";
 import AddFriendModal from "./components/AddFriendModal";
 import Chat from "./components/Chat";
@@ -43,7 +42,10 @@ export const App = () => {
 
   const isOnline = useOnline();
 
-  const [toastOpen, setToastOpen] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastColor, setToastColor] = useState("");
+
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [userModalVisible, setUserModalVisible] = useState(false);
   const [addFriendModalVisible, setAddFriendModalVisible] = useState(false);
@@ -54,7 +56,11 @@ export const App = () => {
   const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
 
   useEffect(() => {
-    if (isOnline !== null) setToastOpen(!isOnline);
+    if (isOnline !== null && isOnline === false) {
+      setToastMessage("No Connection");
+      setToastColor("rgb(185, 28, 28)");
+      setToastVisible(true);
+    }
   }, [isOnline]);
 
   const fetchConversations = async (): Promise<ConversationType[]> => {
@@ -154,23 +160,19 @@ export const App = () => {
           />
           <div className="">
             <AnimatePresence>
-              {toastOpen ? (
+              {toastVisible ? (
                 <motion.div
-                  className="bg-red-800 text-sm font-bold text-primary-light z-10 origin-right px-4 py-2 justify-between absolute top-8 right-6 items-center shadow-md rounded-b-md rounded-l-md flex gap-2"
+                  className={`text-sm bg-red-700 font-bold text-primary-light z-10 origin-right px-4 py-2 justify-between absolute top-8 right-6 items-center shadow-md rounded-b-md rounded-l-md flex gap-2`}
+                  style={{ backgroundColor: toastColor }}
                   initial={{ opacity: 0, scaleX: 0 }}
                   animate={{ opacity: 1, scaleX: 1 }}
                   exit={{ opacity: 0, scaleX: 0 }}
                 >
-                  <img
-                    className="h-5 w-5 animate-spin-cool"
-                    src={LoaderIcon}
-                    alt=""
-                  />
                   <p className="mr-2 uppercase leading-none h-2.5">
-                    No connection
+                    {toastMessage}
                   </p>
                   <img
-                    onClick={() => setToastOpen(false)}
+                    onClick={() => setToastVisible(false)}
                     className="hover:opacity-80 cursor-pointer"
                     src={CloseIcon}
                     alt=""
@@ -341,7 +343,9 @@ export const App = () => {
               onAddConversation={() => {
                 setSelectedPage("Home");
               }}
-              openModal={() => setAddFriendModalVisible(true)}
+              openModal={() => {
+                setAddFriendModalVisible(true);
+              }}
             />
           )}
         </div>
@@ -367,6 +371,15 @@ export const App = () => {
             <AddFriendModal
               onClick={() => {
                 setAddFriendModalVisible(false);
+              }}
+              onSuccess={() => {
+                setToastColor("rgb(74, 222, 128)");
+                setToastMessage("Friend added successfully.");
+                setToastVisible(true);
+                setAddFriendModalVisible(false);
+                setTimeout(() => {
+                  setToastVisible(false);
+                }, 4000);
               }}
             />
           ) : null}

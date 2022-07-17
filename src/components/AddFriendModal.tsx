@@ -4,7 +4,13 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useStore } from "../store/useStore";
 
-const AddFriendModal = ({ onClick }: { onClick: () => void }) => {
+const AddFriendModal = ({
+  onClick,
+  onSuccess,
+}: {
+  onClick: () => void;
+  onSuccess: () => void;
+}) => {
   const { auth } = useStore();
   const [username, setUsername] = useState("");
 
@@ -21,7 +27,7 @@ const AddFriendModal = ({ onClick }: { onClick: () => void }) => {
       onSuccess: () => {
         queryClient.invalidateQueries("friends");
         queryClient.invalidateQueries("friendreq");
-        onClick();
+        onSuccess();
       },
     }
   );

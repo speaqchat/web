@@ -9,7 +9,7 @@ const ProgressBar = ({ progress }: { progress: number }) => {
       exit={{ height: 0, opacity: 0 }}
     >
       <div
-        className="h-full bg-brand-blue w-full transition-transform origin-left rounded-full duration-[2000ms]"
+        className="h-full bg-brand-blue w-full transition-transform origin-left rounded-full duration-[1500ms]"
         style={{ transform: `scaleX(${progress}%)` }}
       />
     </motion.div>
